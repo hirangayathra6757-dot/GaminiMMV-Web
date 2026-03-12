@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 Years Journey | Gamini Central College</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:"Montserrat",sans-serif;
+background:linear-gradient(180deg,#04130f,#061b15);
+color:#eef8f0;
+}
+
+/* HEADER */
+
+.topbar{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+width:90%;
+max-width:1100px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 20px;
+border-radius:40px;
+background:rgba(255,255,255,.06);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.1);
+z-index:100;
+}
+
+.topbar a{
+color:white;
+text-decoration:none;
+font-weight:600;
+}
+
+/* HERO */
+
+.hero{
+height:70vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:40px;
+background:
+linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.7)),
+url("assets/campus_aerial.jpg") center/cover;
+}
+
+.hero h1{
+font-size:52px;
+margin-bottom:10px;
+}
+
+.hero p{
+color:#cde6d6;
+max-width:700px;
+}
+
+/* TIMELINE */
+
+.timeline{
+max-width:1000px;
+margin:auto;
+padding:100px 20px;
+position:relative;
+}
+
+.timeline::before{
+content:"";
+position:absolute;
+left:50%;
+top:0;
+width:4px;
+height:100%;
+background:linear-gradient(#0bd16a,#ffd45a);
+transform:translateX(-50%);
+}
+
+/* BLOCK */
+
+.block{
+width:50%;
+padding:20px;
+position:relative;
+}
+
+.block.left{
+left:0;
+text-align:right;
+}
+
+.block.right{
+left:50%;
+}
+
+.content{
+background:rgba(255,255,255,.05);
+padding:24px;
+border-radius:20px;
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.1);
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.content img{
+width:100%;
+border-radius:12px;
+margin-top:10px;
+}
+
+/* YEAR */
+
+.year{
+font-size:26px;
+font-weight:800;
+color:#ffd45a;
+margin-bottom:6px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.timeline::before{
+left:8px;
+}
+
+.block{
+width:100%;
+padding-left:30px;
+margin-bottom:40px;
+}
+
+.block.left,
+.block.right{
+left:0;
+text-align:left;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+<a href="index.html">← Back</a>
+<div>100 Years Journey</div>
+</div>
+
+
+<section class="hero">
+<div>
+<h1>100 Years of Excellence</h1>
+<p>Celebrating a century of academic excellence, leadership, and unforgettable memories at Gamini Central College, Nuwara Eliya.</p>
+</div>
+</section>
+
+
+<div class="timeline">
+
+
+<div class="block left">
+<div class="content">
+<div class="year">1926</div>
+<p>The founding of Gamini Central College marked the beginning of a journey dedicated to education and excellence.</p>
+<img src="assets/history1.jpg">
+</div>
+</div>
+
+
+<div class="block right">
+<div class="content">
+<div class="year">1950s</div>
+<p>The school expanded with new buildings and programs, nurturing future leaders.</p>
+<img src="assets/history2.jpg">
+</div>
+</div>
+
+
+<div class="block left">
+<div class="content">
+<div class="year">1970s</div>
+<p>Sports and cultural activities flourished, bringing national recognition.</p>
+<img src="assets/history3.jpg">
+</div>
+</div>
+
+
+<div class="block right">
+<div class="content">
+<div class="year">1990s</div>
+<p>Technology and modern education systems were introduced.</p>
+<img src="assets/history4.jpg">
+</div>
+</div>
+
+
+<div class="block left">
+<div class="content">
+<div class="year">2020s</div>
+<p>The school celebrates 100 years of excellence and continues shaping future generations.</p>
+<img src="assets/history5.jpg">
+</div>
+</div>
+
+
+</div>
+
+</body>
+</html>
