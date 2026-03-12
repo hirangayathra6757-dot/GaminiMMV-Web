@@ -97,31 +97,32 @@ function renderTimeline(items){
   function updateTimeline(){
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight;
-
-    const totalScrollable = Math.max(section.offsetHeight - vh * 0.35, 1);
-    const traveled = Math.min(Math.max(-rect.top + vh * 0.2, 0), totalScrollable);
-    const progress = traveled / totalScrollable;
-
+    const start = vh * 0.2;
+    const end = rect.height - vh * 0.45;
+    const raw = (-rect.top + start) / Math.max(end, 1);
+    const progress = Math.max(0, Math.min(1, raw));
     progressEl.style.height = `${(progress * 100).toFixed(1)}%`;
 
     let activeIndex = 0;
-    let bestDistance = Infinity;
-
     cards.forEach((card, i) => {
       const cRect = card.getBoundingClientRect();
-      const center = cRect.top + cRect.height / 2;
-      const distance = Math.abs(center - vh * 0.45);
+      const centerDistance = Math.abs((cRect.top + cRect.height / 2) - vh * 0.45);
 
-      if (distance < bestDistance) {
-        bestDistance = distance;
+      const activeRect = cards[activeIndex].getBoundingClientRect();
+      const activeDistance = Math.abs((activeRect.top + activeRect.height / 2) - vh * 0.45);
+
+      if (i === 0 || centerDistance < activeDistance) {
         activeIndex = i;
       }
     });
 
-    cards.forEach((card, i) => {
-      card.classList.toggle("active", i === activeIndex);
-    });
+    cards.forEach((card, i) => card.classList.toggle("active", i === activeIndex));
   }
+
+  window.addEventListener("scroll", updateTimeline, { passive: true });
+  window.addEventListener("resize", updateTimeline);
+  updateTimeline();
+}
 
   window.addEventListener("scroll", updateTimeline, { passive: true });
   window.addEventListener("resize", updateTimeline);
