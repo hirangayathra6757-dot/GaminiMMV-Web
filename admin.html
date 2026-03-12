@@ -6,12 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "gcc_site_data_v1";
   const DEFAULT_PW = "gcc2026";
 
-  async function loadDefault(){
+  let current = null;
+  let ongoingRows = [];
+  let upcomingRows = [];
+  let albumRows = [];
+
+  async function loadDefault() {
     const res = await fetch("data.json", { cache: "no-store" });
     return res.json();
   }
 
-  function styleInput(inp){
+  function styleInput(inp) {
     inp.style.padding = "10px 12px";
     inp.style.borderRadius = "12px";
     inp.style.border = "1px solid rgba(255,255,255,.12)";
@@ -20,17 +25,29 @@ document.addEventListener("DOMContentLoaded", () => {
     inp.style.width = "100%";
   }
 
-  function createEventRow(e, onRemove){
+  function createEventRow(e, onRemove) {
     const row = document.createElement("div");
     row.style.display = "grid";
     row.style.gridTemplateColumns = "1.2fr .7fr .9fr .55fr auto";
     row.style.gap = "8px";
     row.style.marginBottom = "10px";
 
-    const title = document.createElement("input"); title.value = e.title || ""; title.placeholder = "Title";
-    const date = document.createElement("input"); date.value = e.date || ""; date.placeholder = "YYYY-MM-DD";
-    const loc = document.createElement("input"); loc.value = e.location || ""; loc.placeholder = "Location";
-    const tag = document.createElement("input"); tag.value = e.tag || ""; tag.placeholder = "Tag";
+    const title = document.createElement("input");
+    title.value = e.title || "";
+    title.placeholder = "Title";
+
+    const date = document.createElement("input");
+    date.value = e.date || "";
+    date.placeholder = "YYYY-MM-DD";
+
+    const loc = document.createElement("input");
+    loc.value = e.location || "";
+    loc.placeholder = "Location";
+
+    const tag = document.createElement("input");
+    tag.value = e.tag || "";
+    tag.placeholder = "Tag";
+
     [title, date, loc, tag].forEach(styleInput);
 
     const del = document.createElement("button");
@@ -47,10 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
       location: loc.value,
       tag: tag.value
     });
+
     return row;
   }
 
-  function createAlbumRow(a, onRemove){
+  function createAlbumRow(a, onRemove) {
     const row = document.createElement("div");
     row.className = "glass-card";
     row.style.padding = "12px";
@@ -59,10 +77,23 @@ document.addEventListener("DOMContentLoaded", () => {
     row.style.display = "grid";
     row.style.gap = "8px";
 
-    const title = document.createElement("input"); title.value = a.title || ""; title.placeholder = "Album title";
-    const desc = document.createElement("textarea"); desc.value = a.description || ""; desc.placeholder = "Short description"; desc.rows = 2;
-    const link = document.createElement("input"); link.value = a.link || ""; link.placeholder = "Facebook album or post link";
-    const cover = document.createElement("input"); cover.value = a.cover || ""; cover.placeholder = "Cover image URL (optional)";
+    const title = document.createElement("input");
+    title.value = a.title || "";
+    title.placeholder = "Album title";
+
+    const desc = document.createElement("textarea");
+    desc.value = a.description || "";
+    desc.placeholder = "Short description";
+    desc.rows = 2;
+
+    const link = document.createElement("input");
+    link.value = a.link || "";
+    link.placeholder = "Facebook album or post link";
+
+    const cover = document.createElement("input");
+    cover.value = a.cover || "";
+    cover.placeholder = "Cover image URL (optional)";
+
     [title, desc, link, cover].forEach(styleInput);
 
     const del = document.createElement("button");
@@ -78,10 +109,11 @@ document.addEventListener("DOMContentLoaded", () => {
       link: link.value,
       cover: cover.value
     });
+
     return row;
   }
 
-  function mountRows(container, list, factory){
+  function mountRows(container, list, factory) {
     container.innerHTML = "";
     const rows = [];
     list.forEach((item) => {
@@ -95,13 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return rows;
   }
 
-  let current = null;
-  let ongoingRows = [];
-  let upcomingRows = [];
-  let albumRows = [];
-
-  function fillEditor(data){
+  function fillEditor(data) {
     current = data;
+
     document.getElementById("heroTitle").value = data.hero?.title || "";
     document.getElementById("heroSubtitle").value = data.hero?.subtitle || "";
     document.getElementById("cAddress").value = data.contact?.address || "";
@@ -115,11 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
     albumRows = mountRows(document.getElementById("albumEditor"), data.social?.facebookAlbums || [], createAlbumRow);
   }
 
-  function unlock(){
+  function unlock() {
     document.getElementById("editor").style.display = "block";
   }
 
-  async function loadFromFirebase(){
+  async function loadFromFirebase() {
     try {
       const snap = await getDoc(doc(db, "siteContent", "main"));
       if (snap.exists()) {
@@ -136,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fillEditor(JSON.parse(stored));
         return;
       } catch (e) {
-        console.warn("localStorage parse failed", e);
+        console.warn(e);
       }
     }
 
@@ -248,4 +276,3 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
