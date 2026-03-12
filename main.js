@@ -1,6 +1,6 @@
 const STORAGE_KEY = "gcc_site_data_v1";
 
-async function import { db } from "./firebase.js";
+import { db } from "./firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 async function loadSiteData() {
