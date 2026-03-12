@@ -1,11 +1,25 @@
 const STORAGE_KEY = "gcc_site_data_v1";
 
-async function loadData(){
-  const local = localStorage.getItem(STORAGE_KEY);
-  if(local){
-    try { return JSON.parse(local); } catch {}
+async function import { db } from "./firebase.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+async function loadSiteData() {
+
+  try {
+
+    const docRef = doc(db,"siteContent","main");
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists()){
+      return docSnap.data();
+    }
+
+  } catch(e){
+    console.error("Firebase load failed", e);
   }
-  const res = await fetch("data.json", { cache: "no-store" });
+
+  // fallback if firebase fails
+  const res = await fetch("data.json",{cache:"no-store"});
   return res.json();
 }
 
