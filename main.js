@@ -71,7 +71,7 @@ function renderStats(stats) {
   });
 }
 
-function renderTimeline(items) {
+function renderTimeline(items){
   const wrap = document.getElementById("timelineCards");
   const progressEl = document.getElementById("timelineProgress");
   const section = document.querySelector(".section-journey");
@@ -81,21 +81,52 @@ function renderTimeline(items) {
   wrap.innerHTML = "";
 
   items.forEach((t, i) => {
-    const card = el(
-      "article",
-      "card timeline-card glass-card reveal",
-      `
+    const card = el("article", "card timeline-card glass-card reveal", `
       <div class="year">${t.year}</div>
       <div>
         <div class="title">${t.title}</div>
         <p class="text">${t.text}</p>
       </div>
-      `
-    );
+    `);
     card.dataset.index = String(i);
     wrap.appendChild(card);
   });
 
+  const cards = [...wrap.querySelectorAll(".timeline-card")];
+
+  function updateTimeline(){
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight;
+
+    const totalScrollable = Math.max(section.offsetHeight - vh * 0.35, 1);
+    const traveled = Math.min(Math.max(-rect.top + vh * 0.2, 0), totalScrollable);
+    const progress = traveled / totalScrollable;
+
+    progressEl.style.height = `${(progress * 100).toFixed(1)}%`;
+
+    let activeIndex = 0;
+    let bestDistance = Infinity;
+
+    cards.forEach((card, i) => {
+      const cRect = card.getBoundingClientRect();
+      const center = cRect.top + cRect.height / 2;
+      const distance = Math.abs(center - vh * 0.45);
+
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        activeIndex = i;
+      }
+    });
+
+    cards.forEach((card, i) => {
+      card.classList.toggle("active", i === activeIndex);
+    });
+  }
+
+  window.addEventListener("scroll", updateTimeline, { passive: true });
+  window.addEventListener("resize", updateTimeline);
+  updateTimeline();
+}
   const cards = [...wrap.querySelectorAll(".timeline-card")];
 
   function updateTimeline() {
