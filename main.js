@@ -1,91 +1,134 @@
-const STORAGE_KEY = "gcc_site_data_v1";
-
 import { db } from "./firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+const STORAGE_KEY = "gcc_site_data_v1";
+
+/* safety fallback so loader never stays forever */
+setTimeout(() => {
+  const loader = document.getElementById("loader");
+  if (loader) loader.remove();
+}, 4000);
+
 async function loadSiteData() {
-
   try {
-
-    const docRef = doc(db,"siteContent","main");
+    const docRef = doc(db, "siteContent", "main");
     const docSnap = await getDoc(docRef);
 
-    if(docSnap.exists()){
+    if (docSnap.exists()) {
       return docSnap.data();
     }
-
-  } catch(e){
+  } catch (e) {
     console.error("Firebase load failed", e);
   }
 
-  // fallback if firebase fails
-  const res = await fetch("data.json",{cache:"no-store"});
+  /* fallback to localStorage if available */
+  const local = localStorage.getItem(STORAGE_KEY);
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.warn("localStorage parse failed", e);
+    }
+  }
+
+  /* final fallback to data.json */
+  const res = await fetch("data.json", { cache: "no-store" });
   return res.json();
 }
 
-function formatDate(iso){
-  if(!iso) return "Date TBA";
+function formatDate(iso) {
+  if (!iso) return "Date TBA";
   try {
-    return new Intl.DateTimeFormat("en-LK", { year: "numeric", month: "short", day: "numeric" }).format(new Date(iso));
+    return new Intl.DateTimeFormat("en-LK", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }).format(new Date(iso));
   } catch {
     return iso;
   }
 }
 
-function el(tag, cls, html){
+function el(tag, cls, html) {
   const node = document.createElement(tag);
-  if(cls) node.className = cls;
-  if(html !== undefined) node.innerHTML = html;
+  if (cls) node.className = cls;
+  if (html !== undefined) node.innerHTML = html;
   return node;
 }
 
-function renderStats(stats){
+function renderStats(stats) {
   const row = document.getElementById("statsRow");
+  if (!row) return;
   row.innerHTML = "";
+
   stats.forEach((s) => {
-    const box = el("div", "stat reveal", `<div class="v">${s.value}</div><div class="l">${s.label}</div>`);
+    const box = el(
+      "div",
+      "stat reveal",
+      `<div class="v">${s.value}</div><div class="l">${s.label}</div>`
+    );
     row.appendChild(box);
   });
 }
 
-function renderTimeline(items){
+function renderTimeline(items) {
   const wrap = document.getElementById("timelineCards");
   const progressEl = document.getElementById("timelineProgress");
+  const section = document.querySelector(".section-journey");
+
+  if (!wrap || !progressEl || !section) return;
+
   wrap.innerHTML = "";
 
   items.forEach((t, i) => {
-    const card = el("article", "card timeline-card glass-card reveal", `
+    const card = el(
+      "article",
+      "card timeline-card glass-card reveal",
+      `
       <div class="year">${t.year}</div>
       <div>
         <div class="title">${t.title}</div>
         <p class="text">${t.text}</p>
       </div>
-    `);
+      `
+    );
     card.dataset.index = String(i);
     wrap.appendChild(card);
   });
 
   const cards = [...wrap.querySelectorAll(".timeline-card")];
-  const section = document.querySelector(".section-journey");
 
-  function updateTimeline(){
+  function updateTimeline() {
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight;
     const start = vh * 0.2;
     const end = rect.height - vh * 0.45;
     const raw = (-rect.top + start) / Math.max(end, 1);
     const progress = Math.max(0, Math.min(1, raw));
+
     progressEl.style.height = `${(progress * 100).toFixed(1)}%`;
 
     let activeIndex = 0;
+
     cards.forEach((card, i) => {
       const cRect = card.getBoundingClientRect();
-      const centerDistance = Math.abs((cRect.top + cRect.height / 2) - vh * 0.45);
-      if (i === 0 || centerDistance < Math.abs((cards[activeIndex].getBoundingClientRect().top + cards[activeIndex].getBoundingClientRect().height / 2) - vh * 0.45)) {
+      const centerDistance = Math.abs(
+        (cRect.top + cRect.height / 2) - vh * 0.45
+      );
+
+      const activeRect = cards[activeIndex].getBoundingClientRect();
+      const activeDistance = Math.abs(
+        (activeRect.top + activeRect.height / 2) - vh * 0.45
+      );
+
+      if (i === 0 || centerDistance < activeDistance) {
         activeIndex = i;
       }
     });
-    cards.forEach((card, i) => card.classList.toggle("active", i === activeIndex));
+
+    cards.forEach((card, i) => {
+      card.classList.toggle("active", i === activeIndex);
+    });
   }
 
   window.addEventListener("scroll", updateTimeline, { passive: true });
@@ -93,36 +136,51 @@ function renderTimeline(items){
   updateTimeline();
 }
 
-function renderEvents(list, elId){
+function renderEvents(list, elId) {
   const elm = document.getElementById(elId);
+  if (!elm) return;
   elm.innerHTML = "";
+
   list.forEach((eventItem) => {
-    const item = el("div", "event reveal", `
+    const item = el(
+      "div",
+      "event reveal",
+      `
       <div class="left">
         <div class="t">${eventItem.title}</div>
         <div class="meta">${formatDate(eventItem.date)} • ${eventItem.location}</div>
       </div>
       <div class="tag">${eventItem.tag || "Event"}</div>
-    `);
+      `
+    );
     elm.appendChild(item);
   });
 }
 
-function renderContact(c){
-  document.getElementById("contactAddress").textContent = c.address || "Address will be added soon";
-  document.getElementById("contactPhone").textContent = c.phone || "Phone number will be added soon";
-  document.getElementById("contactEmail").textContent = c.email || "Email will be added soon";
+function renderContact(c) {
+  const address = document.getElementById("contactAddress");
+  const phone = document.getElementById("contactPhone");
+  const email = document.getElementById("contactEmail");
+
+  if (address) address.textContent = c.address || "Address will be added soon";
+  if (phone) phone.textContent = c.phone || "Phone number will be added soon";
+  if (email) email.textContent = c.email || "Email will be added soon";
 }
 
-function renderHero(hero){
-  document.getElementById("heroTitle").textContent = hero.title || "Gamini Central College";
-  document.getElementById("heroSubtitle").textContent = hero.subtitle || "";
-  document.getElementById("heroCtaPrimary").textContent = hero.ctaPrimary || "Explore Journey";
-  document.getElementById("heroCtaSecondary").textContent = hero.ctaSecondary || "Latest Updates";
+function renderHero(hero) {
+  const title = document.getElementById("heroTitle");
+  const subtitle = document.getElementById("heroSubtitle");
+  const ctaPrimary = document.getElementById("heroCtaPrimary");
+  const ctaSecondary = document.getElementById("heroCtaSecondary");
+
+  if (title) title.textContent = hero.title || "Gamini Central College";
+  if (subtitle) subtitle.textContent = hero.subtitle || "";
+  if (ctaPrimary) ctaPrimary.textContent = hero.ctaPrimary || "Explore Journey";
+  if (ctaSecondary) ctaSecondary.textContent = hero.ctaSecondary || "Latest Updates";
 }
 
-function socialLink(label, href){
-  if(!href) return null;
+function socialLink(label, href) {
+  if (!href) return null;
   const a = el("a", "social-pill", label);
   a.href = href;
   a.target = "_blank";
@@ -130,37 +188,48 @@ function socialLink(label, href){
   return a;
 }
 
-function renderSocial(social = {}){
+function renderSocial(social = {}) {
   const heroLinks = document.getElementById("heroSocialLinks");
   const contactLinks = document.getElementById("contactSocialLinks");
   const actions = document.getElementById("galleryActions");
 
-  [heroLinks, contactLinks, actions].forEach((node) => node.innerHTML = "");
+  [heroLinks, contactLinks, actions].forEach((node) => {
+    if (node) node.innerHTML = "";
+  });
 
   const whatsapp = socialLink("WhatsApp Channel", social.whatsappChannel);
   const facebook = socialLink("Facebook Page", social.facebookPage);
 
   [whatsapp, facebook].forEach((link) => {
-    if(link){
-      heroLinks.appendChild(link.cloneNode(true));
-      contactLinks.appendChild(link.cloneNode(true));
-      actions.appendChild(link);
-    }
+    if (!link) return;
+
+    if (heroLinks) heroLinks.appendChild(link.cloneNode(true));
+    if (contactLinks) contactLinks.appendChild(link.cloneNode(true));
+    if (actions) actions.appendChild(link);
   });
 }
 
-function renderAlbums(social = {}){
+function renderAlbums(social = {}) {
   const grid = document.getElementById("albumGrid");
+  if (!grid) return;
+
   grid.innerHTML = "";
   const albums = Array.isArray(social.facebookAlbums) ? social.facebookAlbums : [];
 
-  if(!albums.length){
-    grid.appendChild(el("div", "empty-state glass-card", "Facebook album preview cards will appear here after you add album links in the admin page."));
+  if (!albums.length) {
+    grid.appendChild(
+      el(
+        "div",
+        "empty-state glass-card",
+        "Facebook album preview cards will appear here after you add album links in the admin page."
+      )
+    );
     return;
   }
 
   albums.forEach((album) => {
     const card = el("article", "album-card glass-card reveal");
+
     const cover = el("img", "album-cover");
     cover.src = album.cover || "assets/campus_walk.jpg";
     cover.alt = album.title || "Facebook album";
@@ -172,15 +241,17 @@ function renderAlbums(social = {}){
       <p class="album-desc">${album.description || "Facebook album preview"}</p>
       <div class="album-actions"></div>
     `;
+
     const actions = body.querySelector(".album-actions");
 
-    if(album.link){
+    if (album.link) {
       const open = socialLink("Open Album", album.link);
-      actions.appendChild(open);
+      if (open) actions.appendChild(open);
     }
-    if(social.facebookPage){
+
+    if (social.facebookPage) {
       const page = socialLink("Facebook Page", social.facebookPage);
-      actions.appendChild(page);
+      if (page) actions.appendChild(page);
     }
 
     card.appendChild(cover);
@@ -189,10 +260,10 @@ function renderAlbums(social = {}){
   });
 }
 
-function initReveal(){
+function initReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if(entry.isIntersecting){
+      if (entry.isIntersecting) {
         entry.target.classList.add("in-view");
         observer.unobserve(entry.target);
       }
@@ -202,25 +273,27 @@ function initReveal(){
   document.querySelectorAll(".reveal").forEach((node) => observer.observe(node));
 }
 
-function initLoader(){
+function initLoader() {
   window.addEventListener("load", () => {
     const loader = document.getElementById("loader");
-    if(!loader) return;
+    if (!loader) return;
     loader.style.opacity = "0";
     loader.style.pointerEvents = "none";
     setTimeout(() => loader.remove(), 360);
   });
 }
 
-function initYear(){
-  document.getElementById("year").textContent = String(new Date().getFullYear());
+function initYear() {
+  const year = document.getElementById("year");
+  if (year) year.textContent = String(new Date().getFullYear());
 }
 
-(async function(){
+(async function () {
   initLoader();
   initYear();
 
- const data = await loadSiteData();
+  const data = await loadSiteData();
+
   renderHero(data.hero || {});
   renderStats(data.stats || []);
   renderTimeline(data.timeline || []);
@@ -231,24 +304,3 @@ function initYear(){
   renderAlbums(data.social || {});
   initReveal();
 })();
-import { db } from "./firebase.js";
-import { doc, getDoc } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-async function loadSiteData(){
-
-const docRef = doc(db,"siteContent","main");
-const docSnap = await getDoc(docRef);
-
-if(docSnap.exists()){
-
-const data = docSnap.data();
-
-document.getElementById("heroTitle").innerText = data.heroTitle;
-document.getElementById("heroSubtitle").innerText = data.heroSubtitle;
-
-}
-
-}
-
-loadSiteData();
