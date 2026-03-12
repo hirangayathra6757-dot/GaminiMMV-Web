@@ -59,6 +59,7 @@ function el(tag, cls, html) {
 function renderStats(stats) {
   const row = document.getElementById("statsRow");
   if (!row) return;
+
   row.innerHTML = "";
 
   stats.forEach((s) => {
@@ -71,7 +72,7 @@ function renderStats(stats) {
   });
 }
 
-function renderTimeline(items){
+function renderTimeline(items) {
   const wrap = document.getElementById("timelineCards");
   const progressEl = document.getElementById("timelineProgress");
   const section = document.querySelector(".section-journey");
@@ -81,53 +82,21 @@ function renderTimeline(items){
   wrap.innerHTML = "";
 
   items.forEach((t, i) => {
-    const card = el("article", "card timeline-card glass-card reveal", `
+    const card = el(
+      "article",
+      "card timeline-card glass-card reveal",
+      `
       <div class="year">${t.year}</div>
       <div>
         <div class="title">${t.title}</div>
         <p class="text">${t.text}</p>
       </div>
-    `);
+      `
+    );
     card.dataset.index = String(i);
     wrap.appendChild(card);
   });
 
-  const cards = [...wrap.querySelectorAll(".timeline-card")];
-
-  function updateTimeline(){
-    const rect = section.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const start = vh * 0.2;
-    const end = rect.height - vh * 0.45;
-    const raw = (-rect.top + start) / Math.max(end, 1);
-    const progress = Math.max(0, Math.min(1, raw));
-    progressEl.style.height = `${(progress * 100).toFixed(1)}%`;
-
-    let activeIndex = 0;
-    cards.forEach((card, i) => {
-      const cRect = card.getBoundingClientRect();
-      const centerDistance = Math.abs((cRect.top + cRect.height / 2) - vh * 0.45);
-
-      const activeRect = cards[activeIndex].getBoundingClientRect();
-      const activeDistance = Math.abs((activeRect.top + activeRect.height / 2) - vh * 0.45);
-
-      if (i === 0 || centerDistance < activeDistance) {
-        activeIndex = i;
-      }
-    });
-
-    cards.forEach((card, i) => card.classList.toggle("active", i === activeIndex));
-  }
-
-  window.addEventListener("scroll", updateTimeline, { passive: true });
-  window.addEventListener("resize", updateTimeline);
-  updateTimeline();
-}
-
-  window.addEventListener("scroll", updateTimeline, { passive: true });
-  window.addEventListener("resize", updateTimeline);
-  updateTimeline();
-}
   const cards = [...wrap.querySelectorAll(".timeline-card")];
 
   function updateTimeline() {
@@ -171,6 +140,7 @@ function renderTimeline(items){
 function renderEvents(list, elId) {
   const elm = document.getElementById(elId);
   if (!elm) return;
+
   elm.innerHTML = "";
 
   list.forEach((eventItem) => {
