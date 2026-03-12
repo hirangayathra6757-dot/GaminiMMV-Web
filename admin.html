@@ -265,30 +265,41 @@
       document.getElementById("albumEditor").appendChild(row);
     };
 
-    document.getElementById("saveBtn").onclick = () => {
-      if(!current) return;
+    import { db } from "./firebase.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      current.hero = current.hero || {};
-      current.hero.title = document.getElementById("heroTitle").value;
-      current.hero.subtitle = document.getElementById("heroSubtitle").value;
+document.getElementById("saveBtn").onclick = async () => {
 
-      current.contact = current.contact || {};
-      current.contact.address = document.getElementById("cAddress").value;
-      current.contact.phone = document.getElementById("cPhone").value;
-      current.contact.email = document.getElementById("cEmail").value;
+  current.hero = current.hero || {};
+  current.hero.title = document.getElementById("heroTitle").value;
+  current.hero.subtitle = document.getElementById("heroSubtitle").value;
 
-      current.social = current.social || {};
-      current.social.whatsappChannel = document.getElementById("waLink").value;
-      current.social.facebookPage = document.getElementById("fbPage").value;
-      current.social.facebookAlbums = albumRows.map((r) => r.getValue()).filter((a) => a.title.trim().length || a.link.trim().length);
+  current.contact = current.contact || {};
+  current.contact.address = document.getElementById("cAddress").value;
+  current.contact.phone = document.getElementById("cPhone").value;
+  current.contact.email = document.getElementById("cEmail").value;
 
-      current.ongoing = ongoingRows.map((r) => r.getValue()).filter((e) => e.title.trim().length);
-      current.upcoming = upcomingRows.map((r) => r.getValue()).filter((e) => e.title.trim().length);
+  current.social = current.social || {};
+  current.social.whatsappChannel = document.getElementById("waLink").value;
+  current.social.facebookPage = document.getElementById("fbPage").value;
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
-      alert("Saved! Open Home page to see updates.");
-    };
+  current.social.facebookAlbums =
+    albumRows.map(r => r.getValue())
+    .filter(a => a.title.trim().length || a.link.trim().length);
 
+  current.ongoing =
+    ongoingRows.map(r => r.getValue())
+    .filter(e => e.title.trim().length);
+
+  current.upcoming =
+    upcomingRows.map(r => r.getValue())
+    .filter(e => e.title.trim().length);
+
+  await setDoc(doc(db,"siteContent","main"), current);
+
+  alert("Website updated successfully!");
+
+};
     document.getElementById("resetBtn").onclick = () => {
       localStorage.removeItem(STORAGE_KEY);
       alert("Reset done. Reload home page.");
