@@ -3,7 +3,6 @@ import { db } from "./firebase.js";
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-
   const STORAGE_KEY = "gcc_site_data_v1";
   const DEFAULT_PW = "gcc2026";
 
@@ -145,90 +144,108 @@ document.addEventListener("DOMContentLoaded", () => {
     fillEditor(def);
   }
 
-  document.getElementById("loginBtn").onclick = async () => {
-    const pw = document.getElementById("pw").value.trim();
-    const msg = document.getElementById("loginMsg");
+  const loginBtn = document.getElementById("loginBtn");
+  if (loginBtn) {
+    loginBtn.onclick = async () => {
+      const pw = document.getElementById("pw").value.trim();
+      const msg = document.getElementById("loginMsg");
 
-    if (pw !== DEFAULT_PW) {
-      msg.textContent = "Wrong password.";
-      return;
-    }
+      if (pw !== DEFAULT_PW) {
+        msg.textContent = "Wrong password.";
+        return;
+      }
 
-    msg.textContent = "Unlocked. You can edit content now.";
-    unlock();
-    await loadFromFirebase();
-  };
+      msg.textContent = "Unlocked. You can edit content now.";
+      unlock();
+      await loadFromFirebase();
+    };
+  }
 
-  document.getElementById("addOngoing").onclick = () => {
-    const row = createEventRow({}, (r) => {
-      r.remove();
-      ongoingRows.splice(ongoingRows.indexOf(r), 1);
-    });
-    ongoingRows.push(row);
-    document.getElementById("ongoingEditor").appendChild(row);
-  };
+  const addOngoingBtn = document.getElementById("addOngoing");
+  if (addOngoingBtn) {
+    addOngoingBtn.onclick = () => {
+      const row = createEventRow({}, (r) => {
+        r.remove();
+        ongoingRows.splice(ongoingRows.indexOf(r), 1);
+      });
+      ongoingRows.push(row);
+      document.getElementById("ongoingEditor").appendChild(row);
+    };
+  }
 
-  document.getElementById("addUpcoming").onclick = () => {
-    const row = createEventRow({}, (r) => {
-      r.remove();
-      upcomingRows.splice(upcomingRows.indexOf(r), 1);
-    });
-    upcomingRows.push(row);
-    document.getElementById("upcomingEditor").appendChild(row);
-  };
+  const addUpcomingBtn = document.getElementById("addUpcoming");
+  if (addUpcomingBtn) {
+    addUpcomingBtn.onclick = () => {
+      const row = createEventRow({}, (r) => {
+        r.remove();
+        upcomingRows.splice(upcomingRows.indexOf(r), 1);
+      });
+      upcomingRows.push(row);
+      document.getElementById("upcomingEditor").appendChild(row);
+    };
+  }
 
-  document.getElementById("addAlbum").onclick = () => {
-    const row = createAlbumRow({}, (r) => {
-      r.remove();
-      albumRows.splice(albumRows.indexOf(r), 1);
-    });
-    albumRows.push(row);
-    document.getElementById("albumEditor").appendChild(row);
-  };
+  const addAlbumBtn = document.getElementById("addAlbum");
+  if (addAlbumBtn) {
+    addAlbumBtn.onclick = () => {
+      const row = createAlbumRow({}, (r) => {
+        r.remove();
+        albumRows.splice(albumRows.indexOf(r), 1);
+      });
+      albumRows.push(row);
+      document.getElementById("albumEditor").appendChild(row);
+    };
+  }
 
-  document.getElementById("saveBtn").onclick = async () => {
-    if (!current) current = {};
+  const saveBtn = document.getElementById("saveBtn");
+  if (saveBtn) {
+    saveBtn.onclick = async () => {
+      if (!current) current = {};
 
-    current.hero = current.hero || {};
-    current.hero.title = document.getElementById("heroTitle").value;
-    current.hero.subtitle = document.getElementById("heroSubtitle").value;
+      current.hero = current.hero || {};
+      current.hero.title = document.getElementById("heroTitle").value;
+      current.hero.subtitle = document.getElementById("heroSubtitle").value;
 
-    current.contact = current.contact || {};
-    current.contact.address = document.getElementById("cAddress").value;
-    current.contact.phone = document.getElementById("cPhone").value;
-    current.contact.email = document.getElementById("cEmail").value;
+      current.contact = current.contact || {};
+      current.contact.address = document.getElementById("cAddress").value;
+      current.contact.phone = document.getElementById("cPhone").value;
+      current.contact.email = document.getElementById("cEmail").value;
 
-    current.social = current.social || {};
-    current.social.whatsappChannel = document.getElementById("waLink").value;
-    current.social.facebookPage = document.getElementById("fbPage").value;
-    current.social.facebookAlbums = albumRows
-      .map((r) => r.getValue())
-      .filter((a) => a.title.trim().length || a.link.trim().length);
+      current.social = current.social || {};
+      current.social.whatsappChannel = document.getElementById("waLink").value;
+      current.social.facebookPage = document.getElementById("fbPage").value;
+      current.social.facebookAlbums = albumRows
+        .map((r) => r.getValue())
+        .filter((a) => a.title.trim().length || a.link.trim().length);
 
-    current.ongoing = ongoingRows
-      .map((r) => r.getValue())
-      .filter((e) => e.title.trim().length);
+      current.ongoing = ongoingRows
+        .map((r) => r.getValue())
+        .filter((e) => e.title.trim().length);
 
-    current.upcoming = upcomingRows
-      .map((r) => r.getValue())
-      .filter((e) => e.title.trim().length);
+      current.upcoming = upcomingRows
+        .map((r) => r.getValue())
+        .filter((e) => e.title.trim().length);
 
-    try {
-      await setDoc(doc(db, "siteContent", "main"), current);
-    } catch (e) {
-      console.error("Firebase save failed", e);
-    }
+      try {
+        await setDoc(doc(db, "siteContent", "main"), current);
+      } catch (e) {
+        console.error("Firebase save failed", e);
+      }
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
-    alert("Website updated successfully!");
-  };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+      alert("Website updated successfully!");
+    };
+  }
 
-  document.getElementById("resetBtn").onclick = async () => {
-    localStorage.removeItem(STORAGE_KEY);
-    const def = await loadDefault();
-    fillEditor(def);
-    alert("Reset done.");
-  };
-
+  const resetBtn = document.getElementById("resetBtn");
+  if (resetBtn) {
+    resetBtn.onclick = async () => {
+      localStorage.removeItem(STORAGE_KEY);
+      const def = await loadDefault();
+      fillEditor(def);
+      alert("Reset done.");
+    };
+  }
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
