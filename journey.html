@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>100 Years Journey | Gamini Central College</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 
+/* GLOBAL */
+
 body{
 margin:0;
 font-family:"Montserrat",sans-serif;
 background:linear-gradient(180deg,#04130f,#061b15);
 color:#eef8f0;
+overflow-x:hidden;
 }
 
-/* HEADER */
+/* TOP BAR */
 
 .topbar{
 position:fixed;
-top:20px;
+top:18px;
 left:50%;
 transform:translateX(-50%);
 width:90%;
 max-width:1100px;
+padding:14px 24px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:14px 20px;
-border-radius:40px;
 background:rgba(255,255,255,.06);
 backdrop-filter:blur(20px);
+border-radius:40px;
 border:1px solid rgba(255,255,255,.1);
-z-index:100;
+z-index:10;
 }
 
 .topbar a{
@@ -51,6 +56,7 @@ align-items:center;
 justify-content:center;
 text-align:center;
 padding:40px;
+
 background:
 linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.7)),
 url("assets/campus_aerial.jpg") center/cover;
@@ -62,89 +68,112 @@ margin-bottom:10px;
 }
 
 .hero p{
-color:#cde6d6;
 max-width:700px;
+color:#cde6d6;
 }
 
-/* TIMELINE */
+/* TIMELINE SECTION */
+
+.timeline-section{
+max-width:1100px;
+margin:auto;
+padding:120px 20px;
+}
+
+.timeline-title{
+text-align:center;
+font-size:40px;
+margin-bottom:90px;
+}
+
+/* TIMELINE STRUCTURE */
 
 .timeline{
-max-width:1000px;
-margin:auto;
-padding:100px 20px;
 position:relative;
+display:grid;
+grid-template-columns:60px 1fr;
+gap:40px;
 }
 
-.timeline::before{
-content:"";
-position:absolute;
-left:50%;
-top:0;
+/* LINE */
+
+.timeline-line{
+position:relative;
 width:4px;
-height:100%;
-background:linear-gradient(#0bd16a,#ffd45a);
-transform:translateX(-50%);
-}
-
-/* BLOCK */
-
-.block{
-width:50%;
-padding:20px;
-position:relative;
-}
-
-.block.left{
-left:0;
-text-align:right;
-}
-
-.block.right{
-left:50%;
-}
-
-.content{
-background:rgba(255,255,255,.05);
-padding:24px;
+background:rgba(255,255,255,.1);
 border-radius:20px;
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.1);
-box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
 
-.content img{
+.timeline-progress{
+position:absolute;
+top:0;
+left:0;
+width:4px;
+height:0%;
+background:linear-gradient(#0bd16a,#ffd45a);
+border-radius:20px;
+transition:height .25s ease;
+}
+
+/* CARDS */
+
+.timeline-cards{
+display:flex;
+flex-direction:column;
+gap:60px;
+}
+
+.timeline-card{
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.1);
+padding:28px;
+border-radius:22px;
+backdrop-filter:blur(20px);
+transition:all .35s ease;
+}
+
+.timeline-card img{
 width:100%;
 border-radius:12px;
-margin-top:10px;
+margin-top:12px;
 }
 
-/* YEAR */
-
-.year{
-font-size:26px;
+.timeline-card .year{
+font-size:28px;
 font-weight:800;
 color:#ffd45a;
-margin-bottom:6px;
+margin-bottom:8px;
+}
+
+.timeline-card.active{
+transform:translateX(12px);
+border-color:#ffd45a;
+background:rgba(255,255,255,.08);
+}
+
+/* REVEAL */
+
+.reveal{
+opacity:0;
+transform:translateY(40px);
+transition:all .8s ease;
+}
+
+.reveal.in-view{
+opacity:1;
+transform:translateY(0);
 }
 
 /* MOBILE */
 
-@media(max-width:900px){
+@media(max-width:800px){
 
-.timeline::before{
-left:8px;
+.timeline{
+grid-template-columns:1fr;
 }
 
-.block{
-width:100%;
-padding-left:30px;
-margin-bottom:40px;
-}
-
-.block.left,
-.block.right{
-left:0;
-text-align:left;
+.timeline-line{
+display:none;
 }
 
 }
@@ -153,71 +182,171 @@ text-align:left;
 
 </head>
 
+
 <body>
 
 <div class="topbar">
+
 <a href="index.html">← Back</a>
+
 <div>100 Years Journey</div>
+
 </div>
 
 
 <section class="hero">
+
 <div>
+
 <h1>100 Years of Excellence</h1>
-<p>Celebrating a century of academic excellence, leadership, and unforgettable memories at Gamini Central College, Nuwara Eliya.</p>
+
+<p>
+Celebrating a century of achievements, traditions, and unforgettable moments at
+Gamini Central College, Nuwara Eliya.
+</p>
+
+</div>
+
+</section>
+
+
+<section class="timeline-section">
+
+<h2 class="timeline-title">Our Journey Through The Years</h2>
+
+<div class="timeline">
+
+<div class="timeline-line">
+<div class="timeline-progress" id="timelineProgress"></div>
+</div>
+
+<div class="timeline-cards">
+
+
+<div class="timeline-card reveal">
+
+<div class="year">1926</div>
+
+<h3>Foundation of the College</h3>
+
+<p>
+Gamini Central College was established to provide quality education
+to students in Nuwara Eliya.
+</p>
+
+<img src="assets/history1.jpg">
+
+</div>
+
+
+<div class="timeline-card reveal">
+
+<div class="year">1950</div>
+
+<h3>Expansion Era</h3>
+
+<p>
+The school expanded its academic programs and infrastructure
+to support growing student numbers.
+</p>
+
+<img src="assets/history2.jpg">
+
+</div>
+
+
+<div class="timeline-card reveal">
+
+<div class="year">1975</div>
+
+<h3>Sports & Cultural Success</h3>
+
+<p>
+Students gained recognition in national sports tournaments
+and cultural competitions.
+</p>
+
+<img src="assets/history3.jpg">
+
+</div>
+
+
+<div class="timeline-card reveal">
+
+<div class="year">1995</div>
+
+<h3>Technology Education</h3>
+
+<p>
+Computer education and modern learning technologies
+were introduced to the curriculum.
+</p>
+
+<img src="assets/history4.jpg">
+
+</div>
+
+
+<div class="timeline-card reveal">
+
+<div class="year">2026</div>
+
+<h3>100 Years Celebration</h3>
+
+<p>
+The school celebrates a century of excellence,
+leadership, and inspiration.
+</p>
+
+<img src="assets/history5.jpg">
+
+</div>
+
+
+</div>
 </div>
 </section>
 
 
-<div class="timeline">
+<script>
 
+const cards = document.querySelectorAll(".timeline-card");
+const progress = document.getElementById("timelineProgress");
 
-<div class="block left">
-<div class="content">
-<div class="year">1926</div>
-<p>The founding of Gamini Central College marked the beginning of a journey dedicated to education and excellence.</p>
-<img src="assets/history1.jpg">
-</div>
-</div>
+window.addEventListener("scroll",()=>{
 
+const timeline = document.querySelector(".timeline");
 
-<div class="block right">
-<div class="content">
-<div class="year">1950s</div>
-<p>The school expanded with new buildings and programs, nurturing future leaders.</p>
-<img src="assets/history2.jpg">
-</div>
-</div>
+const rect = timeline.getBoundingClientRect();
 
+const windowHeight = window.innerHeight;
 
-<div class="block left">
-<div class="content">
-<div class="year">1970s</div>
-<p>Sports and cultural activities flourished, bringing national recognition.</p>
-<img src="assets/history3.jpg">
-</div>
-</div>
+const progressHeight = Math.min(
+100,
+Math.max(
+0,
+((windowHeight - rect.top) / (timeline.offsetHeight + windowHeight)) * 100
+)
+);
 
+progress.style.height = progressHeight + "%";
 
-<div class="block right">
-<div class="content">
-<div class="year">1990s</div>
-<p>Technology and modern education systems were introduced.</p>
-<img src="assets/history4.jpg">
-</div>
-</div>
+cards.forEach(card=>{
 
+const cardTop = card.getBoundingClientRect().top;
 
-<div class="block left">
-<div class="content">
-<div class="year">2020s</div>
-<p>The school celebrates 100 years of excellence and continues shaping future generations.</p>
-<img src="assets/history5.jpg">
-</div>
-</div>
+if(cardTop < windowHeight * 0.75){
+card.classList.add("in-view");
+card.classList.add("active");
+}else{
+card.classList.remove("active");
+}
 
+});
 
-</div>
+});
+
+</script>
 
 </body>
 </html>
