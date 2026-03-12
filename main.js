@@ -10,30 +10,51 @@ setTimeout(() => {
 }, 4000);
 
 async function loadSiteData() {
+  /* always load default data first so stats and timeline never disappear */
+  const res = await fetch("data.json", { cache: "no-store" });
+  const defaultData = await res.json();
+
   try {
     const docRef = doc(db, "siteContent", "main");
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data();
+      const firebaseData = docSnap.data();
+
+      return {
+        ...defaultData,
+        ...firebaseData,
+        hero: {
+          ...(defaultData.hero || {}),
+          ...(firebaseData.hero || {})
+        },
+        contact: {
+          ...(defaultData.contact || {}),
+          ...(firebaseData.contact || {})
+        },
+        social: {
+          ...(defaultData.social || {}),
+          ...(firebaseData.social || {})
+        }
+      };
     }
   } catch (e) {
     console.error("Firebase load failed", e);
   }
 
-  /* fallback to localStorage if available */
   const local = localStorage.getItem(STORAGE_KEY);
   if (local) {
     try {
-      return JSON.parse(local);
+      return {
+        ...defaultData,
+        ...JSON.parse(local)
+      };
     } catch (e) {
       console.warn("localStorage parse failed", e);
     }
   }
 
-  /* final fallback to data.json */
-  const res = await fetch("data.json", { cache: "no-store" });
-  return res.json();
+  return defaultData;
 }
 
 function formatDate(iso) {
@@ -295,6 +316,9 @@ function initYear() {
   initYear();
 
   const data = await loadSiteData();
+
+  console.log("Loaded stats:", data.stats);
+  console.log("Loaded timeline:", data.timeline);
 
   renderHero(data.hero || {});
   renderStats(data.stats || []);
