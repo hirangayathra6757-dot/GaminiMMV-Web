@@ -220,7 +220,7 @@ function initYear(){
   initLoader();
   initYear();
 
-  const data = await loadData();
+ const data = await loadSiteData();
   renderHero(data.hero || {});
   renderStats(data.stats || []);
   renderTimeline(data.timeline || []);
