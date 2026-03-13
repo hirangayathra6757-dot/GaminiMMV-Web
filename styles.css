@@ -616,3 +616,31 @@ color:#ffffff;
 }
   border-radius:999px;
 }
+/* ===== FORCE WHITE TEXT IN GLASS CARDS / TIMELINE ===== */
+
+.timeline-card p,
+.timeline-card .text,
+.timeline-card .title,
+.timeline-card h3,
+.timeline-card span,
+.card p,
+.card li,
+.panel p,
+.panel li,
+.section-head p,
+.album-desc,
+.event .meta,
+.mini-panel p{
+  color:#ffffff !important;
+}
+
+/* headings */
+.timeline-card h3,
+.card h3{
+  color:#ffffff !important;
+}
+
+/* ensure muted text also becomes white */
+.muted{
+  color:#ffffff !important;
+}
