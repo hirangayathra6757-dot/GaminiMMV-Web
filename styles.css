@@ -607,5 +607,12 @@ writing-mode: vertical-rl;
   gap:8px;
   align-items:center;
   padding:10px 14px;
+  .timeline-card p{
+color:#ffffff;
+}
+
+.timeline-card h3{
+color:#ffffff;
+}
   border-radius:999px;
 }
