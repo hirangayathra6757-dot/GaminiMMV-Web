@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Information | Gamini Central College</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#04130f;
+      --bg2:#061b15;
+      --text:#eef8f0;
+      --muted:rgba(238,248,240,.78);
+      --green:#0a6b2e;
+      --green2:#0bd16a;
+      --yellow:#ffd45a;
+      --yellow2:#ffea9a;
+      --line:rgba(255,255,255,.12);
+      --shadow:0 24px 60px rgba(0,0,0,.35);
+      --radius:28px;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+      font-family:"Montserrat",system-ui,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(11,209,106,.13), transparent 55%),
+        radial-gradient(900px 600px at 85% 18%, rgba(255,212,90,.10), transparent 50%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+      overflow-x:hidden;
+    }
+
+    .noise{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.14;
+      mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      z-index:0;
+    }
+
+    .blob{
+      position:fixed;
+      border-radius:50%;
+      filter:blur(85px);
+      pointer-events:none;
+      z-index:0;
+      animation:floatBlob 10s ease-in-out infinite alternate;
+    }
+
+    .blob.one{
+      width:260px;
+      height:260px;
+      top:70px;
+      left:-90px;
+      background:rgba(255,212,90,.11);
+    }
+
+    .blob.two{
+      width:320px;
+      height:320px;
+      right:-110px;
+      bottom:50px;
+      background:rgba(11,209,106,.10);
+      animation-duration:12s;
+    }
+
+    .blob.three{
+      width:220px;
+      height:220px;
+      top:42%;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(255,255,255,.04);
+      animation-duration:14s;
+    }
+
+    @keyframes floatBlob{
+      from{ transform:translateY(0px) scale(1); }
+      to{ transform:translateY(-24px) scale(1.05); }
+    }
+
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .glass::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:-120%;
+      width:60%;
+      height:100%;
+      background:linear-gradient(120deg, transparent, rgba(255,255,255,.12), transparent);
+      transform:skewX(-25deg);
+      transition:.9s ease;
+      pointer-events:none;
+    }
+
+    .glass:hover::before{
+      left:120%;
+    }
+
+    .topbar{
+      position:fixed;
+      top:14px;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(1180px, calc(100% - 24px));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px 18px;
+      border-radius:999px;
+      z-index:100;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:var(--text);
+      text-decoration:none;
+      min-width:0;
+    }
+
+    .brand img{
+      width:46px;
+      height:46px;
+      object-fit:contain;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.35));
+    }
+
+    .brand-title{
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .brand-sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+
+    .nav a{
+      text-decoration:none;
+      color:var(--muted);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      transition:.25s ease;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      color:var(--text);
+      background:rgba(255,255,255,.08);
+    }
+
+    .nav .pill{
+      color:var(--yellow2);
+      border:1px solid rgba(255,212,90,.35);
+      background:rgba(255,212,90,.10);
+    }
+
+    .nav-toggle{
+      display:none;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 14px;
+      font-size:20px;
+      line-height:1;
+      cursor:pointer;
+    }
+
+    .hero{
+      position:relative;
+      min-height:80vh;
+      padding:124px 20px 80px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      width:min(1180px, 100%);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:24px;
+      align-items:center;
+    }
+
+    .hero-card{
+      border-radius:38px;
+      padding:34px;
+      min-height:420px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      transform:translateY(0);
+      animation:heroFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes heroFloat{
+      0%,100%{ transform:translateY(0px); }
+      50%{ transform:translateY(-8px); }
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.5px;
+      color:var(--yellow2);
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      width:max-content;
+    }
+
+    h1{
+      margin:14px 0 12px;
+      font-size:clamp(34px, 5vw, 60px);
+      line-height:1.03;
+    }
+
+    .lead{
+      margin:0;
+      max-width:58ch;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:clamp(14px, 1.45vw, 18px);
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:22px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px 18px;
+      border-radius:999px;
+      text-decoration:none;
+      font-weight:800;
+      letter-spacing:.2px;
+      border:1px solid rgba(255,255,255,.10);
+      transition:.25s ease;
+    }
+
+    .btn.primary{
+      color:#051009;
+      border:none;
+      background:linear-gradient(135deg, rgba(11,209,106,.96), rgba(255,212,90,.90));
+      position:relative;
+      overflow:hidden;
+    }
+
+    .btn.primary::after{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:radial-gradient(circle, rgba(255,255,255,.22), transparent 55%);
+      opacity:0;
+      transition:.35s ease;
+    }
+
+    .btn.primary:hover::after{
+      opacity:.45;
+      transform:scale(1.08);
+    }
+
+    .btn.ghost{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .hero-side{
+      min-height:440px;
+      border-radius:38px;
+      padding:24px;
+      display:grid;
+      grid-template-rows:1fr auto;
+      gap:16px;
+    }
+
+    .hero-image{
+      border-radius:28px;
+      background:
+        linear-gradient(rgba(0,0,0,.18), rgba(0,0,0,.26)),
+        url("assets/principal.jpg") center/cover no-repeat;
+      min-height:300px;
+      position:relative;
+      overflow:hidden;
+      animation:heroZoom 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroZoom{
+      from{ transform:scale(1); }
+      to{ transform:scale(1.03); }
+    }
+
+    .hero-image::after{
+      content:"Replace with principal image";
+      position:absolute;
+      left:18px;
+      bottom:16px;
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      background:rgba(0,0,0,.30);
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .hero-mini{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .mini-box{
+      border-radius:24px;
+      padding:18px;
+    }
+
+    .mini-box h3{
+      margin:0 0 8px;
+      font-size:16px;
+      color:#fff;
+    }
+
+    .mini-box p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:14px;
+    }
+
+    .section{
+      position:relative;
+      padding:90px 0;
+      z-index:1;
+    }
+
+    .container{
+      width:min(1180px, calc(100% - 24px));
+      margin:0 auto;
+    }
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:18px;
+      flex-wrap:wrap;
+      margin-bottom:26px;
+    }
+
+    .section-head h2{
+      margin:0 0 10px;
+      font-size:clamp(28px, 3vw, 42px);
+    }
+
+    .section-head p{
+      margin:0;
+      max-width:72ch;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .panel{
+      border-radius:32px;
+      padding:26px;
+    }
+
+    .panel,
+    .card{
+      transition:.35s ease;
+    }
+
+    .panel:hover,
+    .card:hover{
+      transform:translateY(-6px);
+      border-color:rgba(255,255,255,.24);
+      box-shadow:0 26px 80px rgba(0,0,0,.44), 0 0 24px rgba(11,209,106,.10);
+    }
+
+    .principal-layout{
+      display:grid;
+      grid-template-columns:1fr 1.15fr;
+      gap:24px;
+      align-items:stretch;
+    }
+
+    .principal-photo{
+      min-height:420px;
+      border-radius:28px;
+      background:
+        linear-gradient(rgba(0,0,0,.12), rgba(0,0,0,.24)),
+        url("assets/principal-message.jpg") center/cover no-repeat;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .principal-photo::after{
+      content:"Replace with principal photo";
+      position:absolute;
+      bottom:16px;
+      left:16px;
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      background:rgba(0,0,0,.28);
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .principal-copy h3{
+      margin:0 0 12px;
+      font-size:26px;
+      color:var(--yellow2);
+    }
+
+    .principal-copy p{
+      color:#fff;
+      line-height:1.8;
+      margin:0 0 14px;
+    }
+
+    .signature{
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid rgba(255,255,255,.10);
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .timeline{
+      margin-top:26px;
+      position:relative;
+      display:grid;
+      grid-template-columns:24px 1fr;
+      gap:20px;
+    }
+
+    .timeline-line{
+      position:relative;
+      width:6px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      margin-left:9px;
+    }
+
+    .timeline-progress{
+      position:absolute;
+      left:0;
+      top:0;
+      width:6px;
+      height:0%;
+      border-radius:999px;
+      background:linear-gradient(to bottom, rgba(11,209,106,.95), rgba(255,212,90,.88));
+      box-shadow:0 0 24px rgba(11,209,106,.22);
+    }
+
+    .timeline-cards{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .timeline-card{
+      border-radius:28px;
+      padding:22px;
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:18px;
+      align-items:start;
+      scroll-margin-top:110px;
+    }
+
+    .timeline-card .year{
+      font-size:30px;
+      font-weight:800;
+      color:var(--yellow2);
+    }
+
+    .timeline-card .title{
+      font-weight:800;
+      margin:0 0 8px;
+      color:#fff;
+      font-size:22px;
+    }
+
+    .timeline-card .text{
+      margin:0;
+      color:#fff;
+      line-height:1.8;
+    }
+
+    .timeline-card.active{
+      transform:translateX(8px);
+      border-color:rgba(255,212,90,.28);
+      background:linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.06));
+    }
+
+    .prefects-grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:18px;
+    }
+
+    .prefect-card{
+      border-radius:28px;
+      padding:18px;
+      overflow:hidden;
+    }
+
+    .prefect-image{
+      width:100%;
+      aspect-ratio:4/5;
+      border-radius:20px;
+      background:
+        linear-gradient(rgba(0,0,0,.08), rgba(0,0,0,.18)),
+        url("assets/prefect-placeholder.jpg") center/cover no-repeat;
+      margin-bottom:14px;
+      position:relative;
+    }
+
+    .prefect-image::after{
+      content:"Replace image";
+      position:absolute;
+      left:10px;
+      bottom:10px;
+      font-size:11px;
+      font-weight:700;
+      color:#fff;
+      background:rgba(0,0,0,.28);
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .prefect-role{
+      color:var(--yellow2);
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+
+    .prefect-name{
+      margin:8px 0 6px;
+      font-weight:800;
+      font-size:18px;
+      color:#fff;
+    }
+
+    .prefect-note{
+      margin:0;
+      font-size:14px;
+      line-height:1.7;
+      color:var(--muted);
+    }
+
+    .gallery-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:18px;
+    }
+
+    .gallery-card{
+      overflow:hidden;
+      border-radius:28px;
+    }
+
+    .gallery-photo{
+      width:100%;
+      aspect-ratio:16/11;
+      object-fit:cover;
+      display:block;
+      transition:transform .45s ease;
+    }
+
+    .gallery-card:hover .gallery-photo{
+      transform:scale(1.06);
+    }
+
+    .gallery-body{
+      padding:18px;
+    }
+
+    .gallery-body h3{
+      margin:0 0 8px;
+      font-size:20px;
+      color:#fff;
+    }
+
+    .gallery-body p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .docs-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:18px;
+    }
+
+    .doc-card{
+      border-radius:26px;
+      padding:22px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+    }
+
+    .doc-left h3{
+      margin:0 0 8px;
+      font-size:20px;
+      color:#fff;
+    }
+
+    .doc-left p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .footer{
+      margin-top:10px;
+      padding:18px 20px;
+      border-radius:24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .footer-links{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .footer-links a{
+      color:var(--muted);
+      text-decoration:none;
+    }
+
+    .footer-links a:hover{
+      color:#fff;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(28px);
+      transition:all .8s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .reveal.in-view{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    @media (max-width: 1100px){
+      .prefects-grid{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
+
+      .gallery-grid{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 920px){
+      .hero-inner,
+      .principal-layout,
+      .docs-grid,
+      .gallery-grid,
+      .prefects-grid,
+      .hero-mini{
+        grid-template-columns:1fr;
+      }
+
+      .timeline-card{
+        grid-template-columns:1fr;
+      }
+
+      .topbar{
+        border-radius:28px;
+        top:10px;
+        width:min(1180px, calc(100% - 18px));
+        align-items:center;
+        flex-wrap:wrap;
+      }
+
+      .nav-toggle{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .nav{
+        display:none;
+        width:100%;
+        flex-direction:column;
+        align-items:stretch;
+        gap:8px;
+        padding-top:10px;
+      }
+
+      .nav.open{
+        display:flex;
+      }
+
+      .nav a{
+        width:100%;
+        text-align:left;
+        padding:12px 14px;
+        border-radius:14px;
+        background:rgba(255,255,255,.05);
+      }
+
+      .hero{
+        padding-top:150px;
+      }
+    }
+
+    @media (max-width: 640px){
+      .brand-sub{
+        display:none;
+      }
+
+      .timeline{
+        grid-template-columns:1fr;
+      }
+
+      .timeline-line{
+        display:none;
+      }
+
+      .doc-card{
+        flex-direction:column;
+      }
+
+      .hero-card,
+      .hero-side,
+      .panel{
+        padding:20px;
+      }
+
+      .hero h1{
+        font-size:36px;
+      }
+
+      .brand{
+        flex:1;
+        min-width:0;
+      }
+
+      .brand-title{
+        font-size:16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="noise"></div>
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+  <div class="blob three"></div>
+
+  <header class="topbar glass">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="School crest">
+      <div>
+        <div class="brand-title">Gamini Central College</div>
+        <div class="brand-sub">Nuwara Eliya • Information Hub</div>
+      </div>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+
+    <nav class="nav" id="siteNav">
+      <a href="#principal" class="active">Principal</a>
+      <a href="#history">History</a>
+      <a href="#prefects">Prefects</a>
+      <a href="#achievements">Gallery</a>
+      <a href="#documents">Documents</a>
+      <a class="pill" href="index.html">Home</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-card glass reveal">
+        <div class="badge">OFFICIAL SCHOOL INFORMATION</div>
+        <h1>Leadership, legacy, achievements, and essential documents in one premium experience.</h1>
+        <p class="lead">
+          Explore Gamini Central College through its leadership, historical milestones,
+          student representatives, achievements, and important downloadable resources.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn primary" href="#principal">Read Principal’s Message</a>
+          <a class="btn ghost" href="#documents">Open Documents</a>
+        </div>
+      </div>
+
+      <div class="hero-side glass reveal">
+        <div class="hero-image"></div>
+        <div class="hero-mini">
+          <div class="mini-box glass">
+            <h3>School Legacy</h3>
+            <p>A century of discipline, excellence, and service to generations of students.</p>
+          </div>
+          <div class="mini-box glass">
+            <h3>Student Leadership</h3>
+            <p>Celebrating prefects, achievements, and the spirit of responsibility.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="principal" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Principal’s Message</h2>
+          <p>A dedicated section to share the principal’s vision, values, and message to students, parents, and alumni.</p>
+        </div>
+      </div>
+
+      <div class="principal-layout">
+        <div class="principal-photo glass reveal"></div>
+
+        <div class="panel glass reveal principal-copy">
+          <h3>Message from the Principal</h3>
+          <p>
+            Welcome to Gamini Central College, Nuwara Eliya. Our college stands as a symbol of discipline,
+            excellence, and service. For generations, this institution has shaped young minds with knowledge,
+            character, and values that prepare them for the future.
+          </p>
+          <p>
+            As we celebrate our journey, we remain committed to empowering our students in academics,
+            leadership, sports, and cultural excellence. We believe education is not only about achievement,
+            but also about building responsible citizens and compassionate human beings.
+          </p>
+          <p>
+            I invite all students, parents, teachers, past pupils, and well-wishers to continue supporting
+            the growth of this great institution as we move forward into a stronger and brighter future.
+          </p>
+
+          <div class="signature">
+            <div>Replace with Principal’s Name</div>
+            <div>Principal, Gamini Central College</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="history" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Past Principals & School History</h2>
+          <p>A timeline section to highlight the growth of the college and honor the leaders who shaped its path.</p>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-line">
+          <div class="timeline-progress" id="timelineProgress"></div>
+        </div>
+
+        <div class="timeline-cards" id="timelineCards">
+          <article class="timeline-card glass reveal">
+            <div class="year">1926</div>
+            <div>
+              <div class="title">Foundation of the College</div>
+              <p class="text">The beginning of Gamini Central College and its first vision of educational excellence in the hill country.</p>
+            </div>
+          </article>
+
+          <article class="timeline-card glass reveal">
+            <div class="year">1950s</div>
+            <div>
+              <div class="title">Early Expansion</div>
+              <p class="text">New classrooms, a growing student population, and stronger academic opportunities laid the foundation for future progress.</p>
+            </div>
+          </article>
+
+          <article class="timeline-card glass reveal">
+            <div class="year">1970s</div>
+            <div>
+              <div class="title">Sports & Cultural Recognition</div>
+              <p class="text">The school earned recognition in island-wide sports, arts, and cultural competitions.</p>
+            </div>
+          </article>
+
+          <article class="timeline-card glass reveal">
+            <div class="year">2000s</div>
+            <div>
+              <div class="title">Modernization</div>
+              <p class="text">Technology, laboratories, and expanded extracurricular opportunities transformed the college experience.</p>
+            </div>
+          </article>
+
+          <article class="timeline-card glass reveal">
+            <div class="year">2026</div>
+            <div>
+              <div class="title">Centenary Legacy</div>
+              <p class="text">A proud celebration of 100 years of discipline, excellence, and service to generations of students.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prefects" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Prefects Board</h2>
+          <p>Showcase the current student leaders with photos, positions, and short notes. Replace the images and names below with the real board.</p>
+        </div>
+      </div>
+
+      <div class="prefects-grid">
+        <article class="prefect-card glass reveal">
+          <div class="prefect-image"></div>
+          <div class="prefect-role">Head Prefect</div>
+          <div class="prefect-name">Replace Name</div>
+          <p class="prefect-note">Leadership, discipline, and student representation across all major school activities.</p>
+        </article>
+
+        <article class="prefect-card glass reveal">
+          <div class="prefect-image"></div>
+          <div class="prefect-role">Deputy Head Prefect</div>
+          <div class="prefect-name">Replace Name</div>
+          <p class="prefect-note">Supporting school leadership and coordinating student responsibilities with commitment.</p>
+        </article>
+
+        <article class="prefect-card glass reveal">
+          <div class="prefect-image"></div>
+          <div class="prefect-role">Games Captain</div>
+          <div class="prefect-name">Replace Name</div>
+          <p class="prefect-note">Encouraging sportsmanship, team spirit, and excellence in athletics and games.</p>
+        </article>
+
+        <article class="prefect-card glass reveal">
+          <div class="prefect-image"></div>
+          <div class="prefect-role">Media Leader</div>
+          <div class="prefect-name">Replace Name</div>
+          <p class="prefect-note">Promoting communication, creativity, and the visual identity of the school community.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="achievements" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>School Achievements Gallery</h2>
+          <p>A visual section for academic, sports, cultural, and leadership achievements. Replace these images with real photos from your school archives.</p>
+        </div>
+      </div>
+
+      <div class="gallery-grid">
+        <article class="gallery-card glass reveal">
+          <img class="gallery-photo" src="assets/achievement1.jpg" alt="Achievement image 1">
+          <div class="gallery-body">
+            <h3>Academic Excellence</h3>
+            <p>Highlight top performances, scholarship victories, and academic milestones.</p>
+          </div>
+        </article>
+
+        <article class="gallery-card glass reveal">
+          <img class="gallery-photo" src="assets/achievement2.jpg" alt="Achievement image 2">
+          <div class="gallery-body">
+            <h3>Sports Champions</h3>
+            <p>Showcase trophies, teams, competitions, and memorable sports moments.</p>
+          </div>
+        </article>
+
+        <article class="gallery-card glass reveal">
+          <img class="gallery-photo" src="assets/achievement3.jpg" alt="Achievement image 3">
+          <div class="gallery-body">
+            <h3>Cultural Victories</h3>
+            <p>Celebrate drama, music, dance, debate, and public speaking achievements.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="documents" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Downloadable Documents</h2>
+          <p>Provide quick access to school documents such as admission forms, term schedules, handbooks, proposals, notices, and official circulars.</p>
+        </div>
+      </div>
+
+      <div class="docs-grid">
+        <article class="doc-card glass reveal">
+          <div class="doc-left">
+            <h3>Admission Application Form</h3>
+            <p>Replace this with the correct file link for new admissions or transfer requests.</p>
+          </div>
+          <a class="btn primary" href="documents/admission-form.pdf" download>Download</a>
+        </article>
+
+        <article class="doc-card glass reveal">
+          <div class="doc-left">
+            <h3>School Handbook</h3>
+            <p>Share guidelines, rules, student responsibilities, and important school procedures.</p>
+          </div>
+          <a class="btn primary" href="documents/school-handbook.pdf" download>Download</a>
+        </article>
+
+        <article class="doc-card glass reveal">
+          <div class="doc-left">
+            <h3>Term Schedule</h3>
+            <p>Upload the current academic calendar, exam dates, and important term activities.</p>
+          </div>
+          <a class="btn primary" href="documents/term-schedule.pdf" download>Download</a>
+        </article>
+
+        <article class="doc-card glass reveal">
+          <div class="doc-left">
+            <h3>Official Circulars</h3>
+            <p>Use this space for circulars, announcements, and important notices for parents and students.</p>
+          </div>
+          <a class="btn primary" href="documents/official-circulars.pdf" download>Download</a>
+        </article>
+      </div>
+
+      <footer class="footer glass">
+        <div>© <span id="year"></span> Gamini Central College • Information Page</div>
+        <div class="footer-links">
+          <a href="#principal">Principal</a>
+          <a href="#history">History</a>
+          <a href="#prefects">Prefects</a>
+          <a href="#achievements">Gallery</a>
+          <a href="#documents">Documents</a>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if(entry.isIntersecting){
+          entry.target.classList.add("in-view");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+
+    const cards = [...document.querySelectorAll(".timeline-card")];
+    const progress = document.getElementById("timelineProgress");
+    const timeline = document.querySelector(".timeline");
+
+    function updateTimeline(){
+      if(!timeline || !progress || !cards.length) return;
+
+      const rect = timeline.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const start = vh * 0.2;
+      const end = rect.height - vh * 0.45;
+      const raw = (-rect.top + start) / Math.max(end, 1);
+      const progressValue = Math.max(0, Math.min(1, raw));
+
+      progress.style.height = `${(progressValue * 100).toFixed(1)}%`;
+
+      let activeIndex = 0;
+
+      cards.forEach((card, i) => {
+        const cRect = card.getBoundingClientRect();
+        const centerDistance = Math.abs((cRect.top + cRect.height / 2) - vh * 0.45);
+
+        if(
+          i === 0 ||
+          centerDistance < Math.abs((cards[activeIndex].getBoundingClientRect().top + cards[activeIndex].getBoundingClientRect().height / 2) - vh * 0.45)
+        ){
+          activeIndex = i;
+        }
+      });
+
+      cards.forEach((card, i) => {
+        card.classList.toggle("active", i === activeIndex);
+      });
+    }
+
+    window.addEventListener("scroll", updateTimeline, { passive:true });
+    window.addEventListener("resize", updateTimeline);
+    updateTimeline();
+
+    const navToggle = document.getElementById("navToggle");
+    const siteNav = document.getElementById("siteNav");
+
+    navToggle.addEventListener("click", () => {
+      siteNav.classList.toggle("open");
+      const expanded = siteNav.classList.contains("open");
+      navToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+    });
+
+    siteNav.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        siteNav.classList.remove("open");
+        navToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+  </script>
+
+</body>
+</html>
