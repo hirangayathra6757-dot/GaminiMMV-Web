@@ -885,22 +885,21 @@
   font-size:14px;
 }
 .video-container {
-  width: 100%;             /* Full width of the card */
-  aspect-ratio: 16 / 9;    /* Maintains 16:9 ratio */
-  border-radius: 20px;     
+  width: 100%;           /* container fills card width */
+  display: flex;
+  justify-content: center; /* center video horizontally */
+  align-items: center;     /* center video vertically */
   overflow: hidden;
-  background: black;       /* fallback background */
 }
 
-.video-container video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;       /* 'cover' fills container; use 'contain' to fit inside without cropping */
+.video-container video,
+.video-container img {
+  width: auto;      /* keep natural width */
+  height: auto;     /* keep natural height */
+  max-width: 100%;  /* scale down if container is smaller */
+  max-height: 100%; /* scale down if container is smaller */
   display: block;
-  border-radius: 20px;
-  transition: transform .45s ease;
 }
-
 .uniform-card:hover video {
   transform: scale(1.05);
 }
